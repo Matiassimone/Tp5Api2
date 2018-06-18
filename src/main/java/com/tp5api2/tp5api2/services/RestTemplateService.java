@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public final class RestTemplateService {
+public class RestTemplateService {
 
 
     private RestTemplate restTemplate;
@@ -28,16 +28,17 @@ public final class RestTemplateService {
         this.mapper = new ObjectMapper();
     }
 
-    public List<AirportsWebResponse> airportswhitorigin(String url) {
-        List dataResult = this.obteinData(url + "/routes/airportswhitorigin");
-        return this.formatToAirportWebResponse(dataResult);
+    public List<AirportsWebResponse> airportswhitorigin(String url) throws Exception {
+            List dataResult = this.obteinData(url + "/routes/airportswhitorigin");
+            return this.formatToAirportWebResponse(dataResult);
+
     }
 
-    public List<AirportsWebResponse> getdestinationairports(String url, String iata) {
+    public List<AirportsWebResponse> getdestinationairports(String url, String iata) throws Exception {
          List dataResult = this.obteinData(url + "/routes/getdestinationairports/" + iata);
          return this.formatToAirportWebResponse(dataResult);
     }
-    public List<CabinsAndPriceWebResponse> getCabinsAndPricesWhitRouteandDate(String iataOrigin, String iataDestination, String fecha, String url) {
+    public List<CabinsAndPriceWebResponse> getCabinsAndPricesWhitRouteandDate(String iataOrigin, String iataDestination, String fecha, String url) throws Exception {
         List dataResult = this.obteinData(url + "/price/getCabinsAndPrices/iataOrigin/" + iataOrigin + "/iataDestination/" + iataDestination + "/fecha/" + fecha);
         return this.formatToCabinsAndPriceWebResponse(dataResult);
     }
@@ -48,6 +49,7 @@ public final class RestTemplateService {
         return webAirList;
     }
     private List<CabinsAndPriceWebResponse> formatToCabinsAndPriceWebResponse(List res) {
+        // object for mapper LocalTime
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         List<PriceResponse> priceList = mapper.convertValue(res, new TypeReference<List<PriceResponse>>() { });
@@ -56,7 +58,7 @@ public final class RestTemplateService {
         return webAirList;
     }
 
-    private List obteinData(String url) {
+    private List obteinData(String url) throws Exception {
         ResponseEntity<List> response
                 = this.restTemplate.getForEntity(url + "/", List.class);
         List res = response.getBody();
